@@ -1,6 +1,8 @@
+import app.models
 from fastapi import FastAPI
-from app.routers import product_route
 
-app = FastAPI()
+from app.routers.product_route import router as product_router
 
-app.include_router(product_route.router)
+app = FastAPI(title="PetshopFood API")
+
+app.include_router(product_router)
