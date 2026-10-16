@@ -61,13 +61,15 @@ def list_products(service: ProductServiceDep):
 
 @router.get("/{product_id}", response_model=ProductRead)
 def get_product(product_id: int, service: ProductServiceDep):
+    product = service.get_product(product_id)
 
-    if service.get_product(product_id) is None:
+    if product is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Produto não encontrado",
-        )                                   
-    return service.get_product(product_id)
+        )
+
+    return product
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)

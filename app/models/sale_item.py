@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship
 from decimal import Decimal
 from app.models.timestamp_model import TimestampModel
 from app.models.product import Product

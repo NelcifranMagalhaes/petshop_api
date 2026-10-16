@@ -1,5 +1,5 @@
 
-from sqlmodel import SQLModel, Field, Relationship, text
+from sqlmodel import Field, Relationship
 from datetime import datetime
 from decimal import Decimal
 from app.models.timestamp_model import TimestampModel
