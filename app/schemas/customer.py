@@ -1,8 +1,8 @@
 
-from sqlmodel import SQLModel
+from sqlmodel import Field, SQLModel
 
 class CustomerCreate(SQLModel):
-    name: str
+    name: str = Field(..., min_length=1)
     phone: str | None = None
     pets: str | None = None
 

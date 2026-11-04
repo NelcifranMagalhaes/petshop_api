@@ -1,13 +1,13 @@
 from decimal import Decimal
 
-from sqlmodel import SQLModel
+from sqlmodel import Field, SQLModel
 
 
 class ProductCreate(SQLModel):
-    name: str
+    name: str = Field(..., min_length=1)
     description: str | None = None
-    price: Decimal
-    stock_quantity: int
+    price: Decimal = Field(..., ge=0)
+    stock_quantity: int = Field(..., ge=0)
 
 
 class ProductRead(SQLModel):
