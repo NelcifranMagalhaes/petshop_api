@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 
 from app.models.sale import Sale
 from app.models.sale_item import SaleItem
+from app.repositories.customer_repository import CustomerRepository
 from app.repositories.product_repository import ProductRepository
 from app.repositories.sale_item_repository import SaleItemRepository
 from app.repositories.sale_repository import SaleRepository
@@ -17,30 +18,33 @@ class SaleService:
         sale_repository: SaleRepository,
         product_repository: ProductRepository,
         sale_item_repository: SaleItemRepository,
+        customer_repository: CustomerRepository
     ):
         self.sale_repository = sale_repository
         self.product_repository = product_repository
         self.sale_item_repository = sale_item_repository
+        self.customer_repository = customer_repository
 
     def create_sale(self, sale_data):
-        if not sale_data.sale:
-            raise ValueError("A lista de itens da venda não pode estar vazia")
+        customer_id = self.customer_repository.get_by_id(sale_data.customer_id)
+        if not customer_id:
+            raise ValueError(f"Cliente com ID {sale_data.customer_id} não encontrado")
 
         total_amount = Decimal("0")
         products = []
         for item in sale_data.sale:
-            product = self.product_repository.get_by_id(item["product_id"])
+            product = self.product_repository.get_by_id(item.product_id)
             if not product:
-                raise ValueError(f"Produto com ID {item['product_id']} não encontrado")
-            if product.stock_quantity < item["quantity"]:
+                raise ValueError(f"Produto com ID {item.product_id} não encontrado")
+            if product.stock_quantity < item.quantity:
                 raise ValueError(f"Estoque insuficiente para o produto {product.name}")
-            product.stock_quantity -= item["quantity"]
-            total_amount += item["quantity"] * product.price
+            product.stock_quantity -= item.quantity
+            total_amount += item.quantity * product.price
             products.append(product)
 
         sale = self.sale_repository.create(
             Sale(
-                customer_id=sale_data.customer_id,
+                customer_id=customer_id.id,
                 sale_date=datetime.now(timezone.utc),
                 total_amount=total_amount,
             )
@@ -53,9 +57,9 @@ class SaleService:
                 SaleItem(
                     sale_id=sale.id,
                     product_id=product.id,
-                    quantity=item["quantity"],
+                    quantity=item.quantity,
                     unit_price=unit_price,
-                    subtotal=item["quantity"] * unit_price,
+                    subtotal=item.quantity * unit_price,
                 )
             )
 

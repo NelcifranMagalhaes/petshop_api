@@ -1,13 +1,17 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Any
 
 from sqlmodel import Field, SQLModel
 
 
+class SaleItemCreate(SQLModel):
+    product_id: int
+    quantity: int
+
+
 class SaleCreate(SQLModel):
     customer_id: int
-    sale: list[dict[str, Any]] = Field(default_factory=list)
+    sale: list[SaleItemCreate] = Field(..., min_length=1)
 
 
 class SaleItemRead(SQLModel):

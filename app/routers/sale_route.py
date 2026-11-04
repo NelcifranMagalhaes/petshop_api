@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, status
 from sqlmodel import Session
 
 from app.database import get_session
+from app.repositories.customer_repository import CustomerRepository
 from app.repositories.product_repository import ProductRepository
 from app.repositories.sale_item_repository import SaleItemRepository
 from app.repositories.sale_repository import SaleRepository
@@ -20,6 +21,7 @@ def get_sale_service(
         SaleRepository(session),
         ProductRepository(session),
         SaleItemRepository(session),
+        CustomerRepository(session)
     )
 
 
